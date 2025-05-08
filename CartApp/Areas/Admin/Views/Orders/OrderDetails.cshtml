@@ -1,0 +1,71 @@
+@model Order
+
+<div class="container">
+    <h2>Order Details #@Model.Id</h2>
+
+    <div class="card mb-4">
+        <div class="card-header">
+            <div class="row">
+                <div class="col">
+                    <h4>Order Information</h4>
+                </div>
+                <div class="col text-right">
+                    <form asp-action="UpdateOrderStatus" method="post" class="form-inline justify-content-end">
+                        <input type="hidden" name="id" value="@Model.Id" />
+                        <select name="status" class="form-control mr-2">
+                            <option value="Processing" @(Model.Status == "Processing" ? "selected" : "")>Processing</option>
+                            <option value="Shipped" @(Model.Status == "Shipped" ? "selected" : "")>Shipped</option>
+                            <option value="Delivered" @(Model.Status == "Delivered" ? "selected" : "")>Delivered</option>
+                            <option value="Cancelled" @(Model.Status == "Cancelled" ? "selected" : "")>Cancelled</option>
+                        </select>
+                        <button type="submit" class="btn btn-primary">Update Status</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="card-body">
+            <p><strong>Order Date:</strong> @Model.OrderDate.ToString("MM/dd/yyyy HH:mm")</p>
+            <p><strong>Status:</strong> @Model.Status</p>
+            <p><strong>Shipping Address:</strong> @Model.ShippingAddress</p>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <h4>Order Items</h4>
+        </div>
+        <div class="card-body">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Product</th>
+                        <th>Quantity</th>
+                        <th>Unit Price</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.OrderItems)
+                    {
+                        <tr>
+                            <td>@item.Product.Name</td>
+                            <td>@item.Quantity</td>
+                            <td>@item.UnitPrice.ToString("C")</td>
+                            <td>@((item.Quantity * item.UnitPrice).ToString("C"))</td>
+                        </tr>
+                    }
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="3" class="text-right"><strong>Total:</strong></td>
+                        <td><strong>@Model.TotalAmount.ToString("C")</strong></td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+
+    <div class="mt-4">
+        <a asp-action="Orders" class="btn btn-secondary">Back to Orders</a>
+    </div>
+</div>

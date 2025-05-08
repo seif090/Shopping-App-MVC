@@ -19486,6 +19486,11 @@
       "FileKind": "mvc"
     },
     {
+      "FilePath": "c:\\Users\\seaif\\Desktop\\Cart App\\CartApp\\Areas\\Admin\\Views\\Product\\index.cshtml",
+      "TargetPath": "Areas\\Admin\\Views\\Product\\index.cshtml",
+      "FileKind": "mvc"
+    },
+    {
       "FilePath": "c:\\Users\\seaif\\Desktop\\Cart App\\CartApp\\Views\\Cart\\index.cshtml",
       "TargetPath": "Views\\Cart\\index.cshtml",
       "FileKind": "mvc"
@@ -19541,6 +19546,11 @@
       "FileKind": "mvc"
     },
     {
+      "FilePath": "c:\\Users\\seaif\\Desktop\\Cart App\\CartApp\\Areas\\Admin\\Views\\Orders\\Orders.cshtml",
+      "TargetPath": "Areas\\Admin\\Views\\Orders\\Orders.cshtml",
+      "FileKind": "mvc"
+    },
+    {
       "FilePath": "c:\\Users\\seaif\\Desktop\\Cart App\\CartApp\\Views\\Shared\\_ValidationScriptsPartial.cshtml",
       "TargetPath": "Views\\Shared\\_ValidationScriptsPartial.cshtml",
       "FileKind": "mvc"
@@ -19573,6 +19583,11 @@
     {
       "FilePath": "c:\\Users\\seaif\\Desktop\\Cart App\\CartApp\\Views\\Home\\Privacy.cshtml",
       "TargetPath": "Views\\Home\\Privacy.cshtml",
+      "FileKind": "mvc"
+    },
+    {
+      "FilePath": "c:\\Users\\seaif\\Desktop\\Cart App\\CartApp\\Areas\\Admin\\Views\\Orders\\OrderDetails.cshtml",
+      "TargetPath": "Areas\\Admin\\Views\\Orders\\OrderDetails.cshtml",
       "FileKind": "mvc"
     },
     {

@@ -1,4 +1,3 @@
-using CartApp.Data;
 using CartApp.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -40,6 +39,7 @@ builder.Services.AddAuthentication()
     builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
 
 builder.Services.AddScoped<IEmailService, EmailService>();
+builder.Services.AddScoped<IFileService, FileService>();
 
 var app = builder.Build();
 
