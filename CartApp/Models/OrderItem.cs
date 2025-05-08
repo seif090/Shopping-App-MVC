@@ -1,12 +1,13 @@
 namespace CartApp.Models
 {
-    public class CartItem
+    public class OrderItem
     {
         public int Id { get; set; }
+        public int OrderId { get; set; }
         public int ProductId { get; set; }
-        public string UserId { get; set; } = string.Empty;
         public int Quantity { get; set; }
-        public DateTime DateCreated { get; set; }
+        public decimal UnitPrice { get; set; }
+        public virtual Order Order { get; set; } = null!;
         public virtual Product Product { get; set; } = null!;
     }
 }

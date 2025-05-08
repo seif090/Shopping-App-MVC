@@ -19476,6 +19476,11 @@
       "FileKind": "mvc"
     },
     {
+      "FilePath": "c:\\Users\\seaif\\Desktop\\Cart App\\CartApp\\Views\\Order\\Checkout.cshtml",
+      "TargetPath": "Views\\Order\\Checkout.cshtml",
+      "FileKind": "mvc"
+    },
+    {
       "FilePath": "c:\\Users\\seaif\\Desktop\\Cart App\\CartApp\\Views\\WishList\\Index.cshtml",
       "TargetPath": "Views\\WishList\\Index.cshtml",
       "FileKind": "mvc"
@@ -19483,6 +19488,11 @@
     {
       "FilePath": "c:\\Users\\seaif\\Desktop\\Cart App\\CartApp\\Views\\Cart\\index.cshtml",
       "TargetPath": "Views\\Cart\\index.cshtml",
+      "FileKind": "mvc"
+    },
+    {
+      "FilePath": "c:\\Users\\seaif\\Desktop\\Cart App\\CartApp\\Views\\Product\\Index.cshtml",
+      "TargetPath": "Views\\Product\\Index.cshtml",
       "FileKind": "mvc"
     },
     {
@@ -19506,6 +19516,11 @@
       "FileKind": "mvc"
     },
     {
+      "FilePath": "c:\\Users\\seaif\\Desktop\\Cart App\\CartApp\\Views\\Order\\Details.cshtml",
+      "TargetPath": "Views\\Order\\Details.cshtml",
+      "FileKind": "mvc"
+    },
+    {
       "FilePath": "c:\\Users\\seaif\\Desktop\\Cart App\\CartApp\\Views\\Register\\Register.cshtml",
       "TargetPath": "Views\\Register\\Register.cshtml",
       "FileKind": "mvc"
@@ -19513,6 +19528,11 @@
     {
       "FilePath": "c:\\Users\\seaif\\Desktop\\Cart App\\CartApp\\Views\\_ViewStart.cshtml",
       "TargetPath": "Views\\_ViewStart.cshtml",
+      "FileKind": "mvc"
+    },
+    {
+      "FilePath": "c:\\Users\\seaif\\Desktop\\Cart App\\CartApp\\Views\\Order\\index.cshtml",
+      "TargetPath": "Views\\Order\\index.cshtml",
       "FileKind": "mvc"
     },
     {
@@ -19541,13 +19561,13 @@
       "FileKind": "mvc"
     },
     {
-      "FilePath": "c:\\Users\\seaif\\Desktop\\Cart App\\CartApp\\Views\\Checkout\\Checkout.cshtml",
-      "TargetPath": "Views\\Checkout\\Checkout.cshtml",
+      "FilePath": "c:\\Users\\seaif\\Desktop\\Cart App\\CartApp\\Views\\Shared\\Error.cshtml",
+      "TargetPath": "Views\\Shared\\Error.cshtml",
       "FileKind": "mvc"
     },
     {
-      "FilePath": "c:\\Users\\seaif\\Desktop\\Cart App\\CartApp\\Views\\Shared\\Error.cshtml",
-      "TargetPath": "Views\\Shared\\Error.cshtml",
+      "FilePath": "c:\\Users\\seaif\\Desktop\\Cart App\\CartApp\\Views\\Product\\Create.cshtml",
+      "TargetPath": "Views\\Product\\Create.cshtml",
       "FileKind": "mvc"
     },
     {

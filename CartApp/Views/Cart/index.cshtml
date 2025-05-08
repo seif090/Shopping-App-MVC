@@ -1,39 +1,52 @@
-@model IEnumerable<CartApp.Models.CartItem>
+@model IEnumerable<CartItem>
 
-<h2>Shopping Cart</h2>
-
-<table class="table">
-    <thead>
-        <tr>
-            <th>Product</th>
-            <th>Price</th>
-            <th>Quantity</th>
-            <th>Total</th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
-            <tr>
-                <td>@item.Product.Name</td>
-                <td>$@item.Product.Price</td>
-                <td>
-                    <input type="number" value="@item.Quantity" min="1" 
-                           onchange="updateQuantity(@item.Product.Id, this.value)" />
-                </td>
-                <td>$@(item.Product.Price * item.Quantity)</td>
-                <td>
-                    <button class="btn btn-danger" onclick="removeItem(@item.Product.Id)">Remove</button>
-                </td>
-            </tr>
-        }
-    </tbody>
-    <tfoot>
-        <tr>
-            <td colspan="3"><strong>Total:</strong></td>
-            <td>$@Model.Sum(item => item.Product.Price * item.Quantity)</td>
-            <td></td>
-        </tr>
-    </tfoot>
-</table>
+<div class="container">
+    <h2>Your Shopping Cart</h2>
+    
+    @if (!Model.Any())
+    {
+        <p>Your cart is empty.</p>
+    }
+    else
+    {
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Product</th>
+                    <th>Price</th>
+                    <th>Quantity</th>
+                    <th>Total</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.Product.Name</td>
+                        <td>@item.Product.Price.ToString("C")</td>
+                        <td>@item.Quantity</td>
+                        <td>@((item.Product.Price * item.Quantity).ToString("C"))</td>
+                        <td>
+                            <form asp-action="RemoveFromCart" method="post">
+                                <input type="hidden" name="id" value="@item.Id" />
+                                <button type="submit" class="btn btn-danger btn-sm">Remove</button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="3" class="text-right"><strong>Total:</strong></td>
+                    <td>@Model.Sum(i => i.Product.Price * i.Quantity).ToString("C")</td>
+                    <td></td>
+                </tr>
+            </tfoot>
+        </table>
+        
+        <div class="text-right">
+            <a asp-controller="Order" asp-action="Checkout" class="btn btn-primary">Proceed to Checkout</a>
+        </div>
+    }
+</div>

@@ -81,6 +81,10 @@
               "target": "Package",
               "version": "[9.0.4, )"
             },
+            "Stripe.net": {
+              "target": "Package",
+              "version": "[48.1.0, )"
+            },
             "System.Security.Claims": {
               "target": "Package",
               "version": "[4.3.0, )"

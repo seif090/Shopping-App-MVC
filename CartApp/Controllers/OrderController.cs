@@ -1,80 +1,169 @@
+using System.Linq;
+using System.Security.Claims;
+using System.Threading.Tasks;
 using CartApp.Models;
+using CartApp.Services;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Stripe;
 
-namespace CartApp.Controllers
+[Authorize]
+public class OrderController : Controller
 {
-    [Authorize]
-    public class OrderController : Controller
+        private readonly ApplicationDbContext _context;
+    private readonly UserManager<ApplicationUser> _userManager;
+    private readonly PaymentService _paymentService;
+    private readonly IEmailService _emailService;
+    private readonly IConfiguration _configuration;
+
+    public OrderController(
+        ApplicationDbContext context,
+        UserManager<ApplicationUser> userManager,
+        PaymentService paymentService,
+        IEmailService emailService,
+        IConfiguration configuration
+    )
     {
-        private const string CartSessionKey = "CartItems";
+        _context = context;
+        _userManager = userManager;
+        _paymentService = paymentService;
+        _emailService = emailService;
+        _configuration = configuration;
+    }
 
-        public IActionResult Checkout()
+    public async Task<IActionResult> Checkout()
+    {
+        var userId = _userManager.GetUserId(User);
+        var cartItems = await _context
+            .CartItems.Include(c => c.Product)
+            .Where(c => c.UserId == userId)
+            .ToListAsync();
+
+        if (!cartItems.Any())
+            return RedirectToAction("Index", "Cart");
+
+        var totalAmount = cartItems.Sum(ci => ci.Product.Price * ci.Quantity);
+        var paymentIntent = await _paymentService.CreatePaymentIntent(totalAmount);
+
+        ViewBag.ClientSecret = paymentIntent.ClientSecret;
+        ViewBag.StripePublicKey = _configuration["Stripe:PublicKey"];
+
+        var order = new Order
         {
-            var cartItems =
-                HttpContext.Session.GetString(CartSessionKey) != null
-                    ? System.Text.Json.JsonSerializer.Deserialize<List<CartItem>>(
-                        HttpContext.Session.GetString(CartSessionKey))
-                    : new List<CartItem>();
-            if (!cartItems.Any())
-                return RedirectToAction("Index", "Cart");
+            UserId = userId,
+            OrderDate = DateTime.Now,
+            TotalAmount = totalAmount,
+        };
 
-            var checkoutViewModel = new CheckoutViewModel
-            {
-                CartItems = cartItems,
-                TotalAmount = cartItems.Sum(item => item.Product.Price * item.Quantity),
-            };
-
-            return View(checkoutViewModel);
-        }
-
-        [HttpPost]
-        public IActionResult PlaceOrder(CheckoutViewModel model)
+        return View(order);
+    }
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> PlaceOrder(Order order, string paymentIntentId)
+    {
+        if (ModelState.IsValid)
         {
-            if (!ModelState.IsValid)
-                return View("Checkout", model);
+            var userId = _userManager.GetUserId(User);
+            var cartItems = await _context
+                .CartItems.Include(c => c.Product)
+                .Where(c => c.UserId == userId)
+                .ToListAsync();
 
-            var cartItems =
-                HttpContext.Session.GetString(CartSessionKey) != null
-                    ? System.Text.Json.JsonSerializer.Deserialize<List<CartItem>>(
-                        HttpContext.Session.GetString(CartSessionKey)
-                    )
-                    : new List<CartItem>();
+            order.UserId = userId;
+            order.OrderDate = DateTime.Now;
+            order.TotalAmount = cartItems.Sum(ci => ci.Product.Price * ci.Quantity);
+            order.Status = "Processing";
 
-            var order = new Order
+            foreach (var item in cartItems)
             {
-                UserId = User.Identity.Name,
-                OrderDate = DateTime.Now,
-                TotalAmount = cartItems.Sum(item => item.Product.Price * item.Quantity),
-                OrderStatus = "Pending",
-                OrderItems = cartItems
-                    .Select(item => new OrderItem
+                order.OrderItems.Add(
+                    new OrderItem
                     {
-                        ProductId = item.Product.Id,
+                        ProductId = item.ProductId,
                         Quantity = item.Quantity,
-                        Price = item.Product.Price,
-                    })
-                    .ToList(),
-            };
+                        UnitPrice = item.Product.Price,
+                    }
+                );
 
-            // Save order to database (to be implemented)
+                // Update product stock
+                var product = await _context.Products.FindAsync(item.ProductId);
+                if (product != null)
+                {
+                    product.StockQuantity -= item.Quantity;
+                }
+            }
 
-            // Clear cart
-            HttpContext.Session.Remove(CartSessionKey);
+            _context.Orders.Add(order);
+            _context.CartItems.RemoveRange(cartItems);
+            await _context.SaveChangesAsync();
 
-            return RedirectToAction("OrderConfirmation", new { orderId = order.Id });
+            // Send order confirmation email
+            await _emailService.SendEmailAsync(
+                User.Identity.Name,
+                "Order Confirmation",
+                $"Thank you for your order! Your order number is {order.Id}."
+            );
+
+            return RedirectToAction("OrderConfirmation", new { id = order.Id });
         }
 
-        public IActionResult OrderConfirmation(int orderId)
+        return View("Checkout", order);
+    }
+        // ... existing controller code ...
+
+    public async Task<IActionResult> OrderConfirmation(int id)
+    {
+        var userId = _userManager.GetUserId(User);
+        var order = await _context.Orders
+            .Include(o => o.OrderItems)
+            .ThenInclude(oi => oi.Product)
+            .FirstOrDefaultAsync(o => o.Id == id && o.UserId == userId);
+
+        if (order == null)
+            return NotFound();
+
+        return View(order);
+    }
+
+    [Authorize(Roles = "Admin")]
+    public async Task<IActionResult> UpdateStatus(int id, string status)
+    {
+        var order = await _context.Orders.FindAsync(id);
+        if (order == null)
+            return NotFound();
+
+        order.Status = status;
+        await _context.SaveChangesAsync();
+
+        // Send status update email to customer
+        var user = await _userManager.FindByIdAsync(order.UserId);
+        if (user != null)
         {
-            // Get order details from database (to be implemented)
-            return View();
+            await _emailService.SendEmailAsync(
+                user.Email,
+                "Order Status Update",
+                $"Your order #{order.Id} status has been updated to: {status}"
+            );
         }
 
-        public IActionResult OrderHistory()
-        {
-            // Get user's order history from database (to be implemented)
-            return View();
-        }
+        return RedirectToAction(nameof(Details), new { id = order.Id });
+    }
+
+    public async Task<IActionResult> Details(int id)
+    {
+        var userId = _userManager.GetUserId(User);
+        var order = await _context.Orders
+            .Include(o => o.OrderItems)
+            .ThenInclude(oi => oi.Product)
+            .FirstOrDefaultAsync(o => o.Id == id && (o.UserId == userId || User.IsInRole("Admin")));
+
+        if (order == null)
+            return NotFound();
+
+        return View(order);
     }
 }
+

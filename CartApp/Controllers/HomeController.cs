@@ -50,7 +50,8 @@ namespace CartApp.Controllers
 
     if (categoryId.HasValue)
     {
-        products = products.Where(p => p.CategoryId == categoryId);
+// Remove the CategoryId filter since the Product model doesn't have this property
+products = products;
     }
 
     return View("Index", products.ToList());

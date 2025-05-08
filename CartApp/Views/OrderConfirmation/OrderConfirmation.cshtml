@@ -1,5 +1,20 @@
-<div class="text-center">
-    <h2>Thank You for Your Order!</h2>
-    <p class="lead">Your order has been successfully placed.</p>
-    <a asp-controller="Home" asp-action="Index" class="btn btn-primary">Continue Shopping</a>
+@model Order
+
+<div class="container">
+    <div class="card mt-4">
+        <div class="card-body text-center">
+            <h2 class="card-title">Thank You for Your Order!</h2>
+            <p class="card-text">Your order has been successfully placed.</p>
+            <p class="card-text">Order Number: <strong>@Model.Id</strong></p>
+            <p class="card-text">Total Amount: <strong>@Model.TotalAmount.ToString("C")</strong></p>
+            <hr />
+            <p class="card-text">
+                We'll send you an email confirmation with order details shortly.
+            </p>
+            <div class="mt-4">
+                <a asp-action="Details" asp-route-id="@Model.Id" class="btn btn-primary">View Order Details</a>
+                <a asp-controller="Home" asp-action="Index" class="btn btn-secondary">Continue Shopping</a>
+            </div>
+        </div>
+    </div>
 </div>

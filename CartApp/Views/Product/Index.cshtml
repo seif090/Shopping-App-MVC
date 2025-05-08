@@ -1,0 +1,46 @@
+@model IEnumerable<Product>
+
+<div class="container">
+    <div class="row mb-3">
+        <div class="col">
+            <h2>Products</h2>
+        </div>
+        @if (User.IsInRole("Admin"))
+        {
+            <div class="col text-right">
+                <a asp-action="Create" class="btn btn-primary">Add New Product</a>
+            </div>
+        }
+    </div>
+
+    <div class="row">
+        @foreach (var product in Model)
+        {
+            <div class="col-md-4 mb-4">
+                <div class="card h-100">
+                    @if (!string.IsNullOrEmpty(product.ImageUrl))
+                    {
+                        <img src="@product.ImageUrl" class="card-img-top" alt="@product.Name">
+                    }
+                    <div class="card-body">
+                        <h5 class="card-title">@product.Name</h5>
+                        <p class="card-text">@product.Description</p>
+                        <p class="card-text"><strong>Price: </strong>@product.Price.ToString("C")</p>
+                        <p class="card-text"><small class="text-muted">Stock: @product.StockQuantity</small></p>
+                    </div>
+                    <div class="card-footer bg-transparent">
+                        <form asp-controller="Cart" asp-action="AddToCart" method="post">
+                            <input type="hidden" name="productId" value="@product.Id" />
+                            <input type="number" name="quantity" value="1" min="1" max="@product.StockQuantity" class="form-control mb-2" />
+                            <button type="submit" class="btn btn-success btn-block">Add to Cart</button>
+                        </form>
+                        @if (User.IsInRole("Admin"))
+                        {
+                            <a asp-action="Edit" asp-route-id="@product.Id" class="btn btn-primary btn-block mt-2">Edit</a>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>

@@ -1,0 +1,79 @@
+@model Order
+
+<div class="container">
+    <h2>Checkout</h2>
+
+    <form asp-action="PlaceOrder" method="post" id="payment-form">
+        <div class="row">
+            <div class="col-md-8">
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h4>Shipping Information</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-group">
+                            <label asp-for="ShippingAddress"></label>
+                            <textarea asp-for="ShippingAddress" class="form-control" rows="3" required></textarea>
+                            <span asp-validation-for="ShippingAddress" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h4>Payment Information</h4>
+                    </div>
+                    <div class="card-body">
+                        <div id="card-element" class="form-control"></div>
+                        <div id="card-errors" class="text-danger mt-2"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h4>Order Summary</h4>
+                    </div>
+                    <div class="card-body">
+                        <p><strong>Total Amount:</strong> @Model.TotalAmount.ToString("C")</p>
+                        <button type="submit" class="btn btn-primary btn-block" id="submit-button">Pay and Place Order</button>
+                        <a asp-controller="Cart" asp-action="Index" class="btn btn-secondary btn-block mt-2">Back to Cart</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script src="https://js.stripe.com/v3/"></script>
+    <script>
+        const stripe = Stripe('@ViewBag.StripePublicKey');
+        const elements = stripe.elements();
+        const card = elements.create('card');
+        card.mount('#card-element');
+
+        const form = document.getElementById('payment-form');
+        const submitButton = document.getElementById('submit-button');
+
+        form.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            submitButton.disabled = true;
+
+            const {paymentIntent, error} = await stripe.confirmCardPayment('@ViewBag.ClientSecret', {
+                payment_method: {
+                    card: card,
+                }
+            });
+
+            if (error) {
+                const errorElement = document.getElementById('card-errors');
+                errorElement.textContent = error.message;
+                submitButton.disabled = false;
+            } else {
+                form.submit();
+            }
+        });
+    </script>
+}
