@@ -1,0 +1,22 @@
+@model IEnumerable<CartApp.Models.WishListItem>
+
+<h2>My Wishlist</h2>
+
+<div class="row">
+    @foreach (var item in Model)
+    {
+        <div class="col-md-4 mb-4">
+            <div class="card">
+                <img src="@item.Product.ImageUrl" class="card-img-top" alt="@item.Product.Name">
+                <div class="card-body">
+                    <h5 class="card-title">@item.Product.Name</h5>
+                    <p class="card-text">@item.Product.Description</p>
+                    <p class="card-text">Price: $@item.Product.Price</p>
+                    <p class="card-text"><small class="text-muted">Added on: @item.DateAdded.ToString("MM/dd/yyyy")</small></p>
+                    <button class="btn btn-success" onclick="addToCart(@item.Product.Id)">Add to Cart</button>
+                    <button class="btn btn-danger" onclick="removeFromWishList(@item.Product.Id)">Remove</button>
+                </div>
+            </div>
+        </div>
+    }
+</div>

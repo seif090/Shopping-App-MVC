@@ -1,0 +1,76 @@
+@model CartApp.Models.Product
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-6">
+            <img src="@Model.ImageUrl" class="img-fluid" alt="@Model.Name">
+        </div>
+        <div class="col-md-6">
+            <h2>@Model.Name</h2>
+            <p class="lead">@Model.Description</p>
+            <h3 class="text-primary">$@Model.Price</h3>
+            
+            <div class="rating mb-3">
+                @for (int i = 1; i <= 5; i++)
+                {
+                    <i class="fas fa-star @(i <= Model.AverageRating ? "text-warning" : "text-secondary")"></i>
+                }
+                <span class="ms-2">(@Model.ReviewCount reviews)</span>
+            </div>
+
+            <div class="mb-3">
+                <button class="btn btn-success btn-lg" onclick="addToCart(@Model.Id)">Add to Cart</button>
+                <button class="btn btn-outline-danger btn-lg" onclick="addToWishList(@Model.Id)">
+                    <i class="far fa-heart"></i> Add to Wishlist
+                </button>
+            </div>
+
+            <hr>
+
+            <h4>Customer Reviews</h4>
+            <div class="mb-3">
+                <form id="reviewForm">
+                    <input type="hidden" name="productId" value="@Model.Id">
+                    <div class="mb-2">
+                        <label>Your Rating:</label>
+                        <div class="rating-input">
+                            @for (int i = 1; i <= 5; i++)
+                            {
+                                <i class="far fa-star" data-rating="@i"></i>
+                            }
+                        </div>
+                    </div>
+                    <div class="mb-2">
+                        <textarea class="form-control" name="comment" rows="3" placeholder="Write your review..."></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Submit Review</button>
+                </form>
+            </div>
+
+            <div id="reviewsList">
+                @foreach (var review in Model.Reviews)
+                {
+                    <div class="card mb-2">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <h6 class="card-subtitle mb-2 text-muted">@review.UserName</h6>
+                                <div class="rating">
+                                    @for (int i = 1; i <= 5; i++)
+                                    {
+                                        <i class="fas fa-star @(i <= review.Rating ? "text-warning" : "text-secondary")"></i>
+                                    }
+                                </div>
+                            </div>
+                            <p class="card-text">@review.Comment</p>
+                            <small class="text-muted">@review.CreatedAt.ToString("MMM dd, yyyy")</small>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/product-details.js"></script>
+}

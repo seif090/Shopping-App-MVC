@@ -1,0 +1,67 @@
+html {
+  font-size: 14px;
+}
+
+@media (min-width: 768px) {
+  html {
+      font-size: 16px;
+  }
+}
+
+.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+}
+
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+body {
+  margin-bottom: 60px;
+}
+
+.footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  white-space: nowrap;
+  line-height: 60px;
+}
+
+.card {
+  transition: transform 0.2s;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+}
+
+.card-img-top {
+  height: 200px;
+  object-fit: cover;
+}
+.rating i {
+  cursor: pointer;
+  font-size: 1.2rem;
+}
+
+.rating-input i {
+  cursor: pointer;
+  font-size: 1.5rem;
+  margin-right: 5px;
+}
+
+.rating-input i:hover {
+  color: #ffc107;
+}
+
+.product-details img {
+  max-height: 400px;
+  object-fit: contain;
+}
+
+.review-card {
+  border-left: 4px solid #007bff;
+  margin-bottom: 1rem;
+}
